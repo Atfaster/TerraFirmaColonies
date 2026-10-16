@@ -404,12 +404,12 @@ public class TFCPlacementHandlers {
         }
     }
 
-    //TFCTorcj
+    //TFCTorch
     static class TFCTorchPlacementHandler implements IPlacementHandler {
 
         @Override
         public boolean canHandle(final Level world, final BlockPos pos, final BlockState blockState) {
-            return blockState.is(TFCBlocks.DEAD_TORCH.get());
+            return blockState.is(TFCBlocks.DEAD_TORCH.get()) || blockState.is(TFCBlocks.DEAD_WALL_TORCH.get());
         }
 
         @Override
@@ -432,9 +432,7 @@ public class TFCPlacementHandlers {
                 @Nullable CompoundTag tileEntityData,
                 @NotNull IPlacementContext placementContext
         ) {
-            return new ArrayList<>(List.of(
-                    new ItemStack(TFCItems.TORCH.get(), 1)
-            ));
+            return List.of(new ItemStack(Items.STICK, 1));
         }
 
         @Override

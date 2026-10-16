@@ -55,8 +55,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
-import static com.mojang.text2speech.Narrator.LOGGER;
-
 @Mixin(value = AbstractEntityAIRequestSmelter.class)
 public abstract class AbstractEntityAIRequestSmelterMixin<J extends AbstractJobCrafter<?, J>, B extends AbstractBuilding> extends AbstractEntityAICrafting<J, B> {
     @Shadow(remap = false)
@@ -361,7 +359,6 @@ public abstract class AbstractEntityAIRequestSmelterMixin<J extends AbstractJobC
      */
     @Overwrite(remap = false)
     private IAIState retrieveUnrelatedProductFromFurnace() {
-        LOGGER.info("retrieveUnrelatedProductFromFurnace");
         if (this.furnacePos == null) {
             return AIWorkerState.START_WORKING;
         } else {
@@ -507,7 +504,6 @@ public abstract class AbstractEntityAIRequestSmelterMixin<J extends AbstractJobC
      */
     @Overwrite(remap = false)
     private IAIState fillUpFurnace() {
-        LOGGER.info("Entered fillupfurnace state!");
         if (this.furnacePos != null && this.currentRecipeStorage != null) {
             if (this.job.getMaxCraftingCount() == 0) {
                 this.job.setMaxCraftingCount(this.currentRequest.getRequest().getCount());
@@ -738,9 +734,7 @@ public abstract class AbstractEntityAIRequestSmelterMixin<J extends AbstractJobC
     @Overwrite(remap = false)
     @Override
     public IAIState executeCraftingAction(int toolSlot) {
-        LOGGER.info("executeCraftingAction!");
         if (!terrafirmacolonies$hasNecessaryBlocks()) {
-            LOGGER.info("can't find workblocks!");
             if (this.worker.getCitizenData() != null) {
                 if (this.building instanceof BuildingGlassblower) {
                     this.worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable("net.ckeeze.terrafirmacolonies.glassblowerBuildingComplain"), ChatPriority.BLOCKING));
@@ -766,45 +760,34 @@ public abstract class AbstractEntityAIRequestSmelterMixin<J extends AbstractJobC
             return AIWorkerState.START_WORKING;
         }
         if (this.currentRecipeStorage == null) {
-            LOGGER.info("no recipe found!");
             return AIWorkerState.START_WORKING;
         } else if (!(this.currentRecipeStorage.getIntermediate().defaultBlockState().is(BlockTags.SAND)) && this.currentRecipeStorage.getIntermediate() != Blocks.FURNACE && this.currentRecipeStorage.getIntermediate() != TFCBlocks.CHARCOAL_FORGE.get() && this.currentRecipeStorage.getIntermediate() != TFCBlocks.POT.get() && this.currentRecipeStorage.getIntermediate() != FLBlocks.VAT.get()) {
-            LOGGER.info("no intermedieta found!");
             return super.executeCraftingAction(toolSlot);
         } else if (!this.areFurnacesLoaded()) {
-            LOGGER.info("furnaces not loaded!");
             return AIWorkerState.START_WORKING;
         } else {
-            LOGGER.info("getting fuel list!");
             List<ItemStack> possibleFuels = this.getAllowedFuel();
             if (possibleFuels.isEmpty()) {
                 if (this.worker.getCitizenData() != null) {
                     this.worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable("com.minecolonies.coremod.furnaceuser.nofuel"), ChatPriority.BLOCKING));
                 }
-                LOGGER.info("Possible Fuel list empty!");
                 return this.getState();
             } else {
                 this.furnacePos = this.getFurnaceToRetrieveOutputFrom();
                 if (this.furnacePos != null) {
-                    LOGGER.info("Retrieving product!");
                     return AIWorkerState.RETRIEVING_END_PRODUCT_FROM_FURNACE;
                 } else {
-                    LOGGER.info("No ready furnace found!");
                     this.furnacePos = this.getFurnaceToRetrieveUnrelatedInputFrom();
                     if (this.furnacePos != null) {
-                        LOGGER.info("Retrieving unrelated product!");
                         return AIWorkerState.RETRIEVING_UNRELATED_PRODUCT_FROM_FURNACE;
                     } else {
                         if (InventoryUtils.hasBuildingEnoughElseCount(this.building, isCorrectFuel(possibleFuels), 1) > 1 || InventoryUtils.hasItemInItemHandler(this.worker.getInventoryCitizen(), isCorrectFuel(possibleFuels))) {
-                            LOGGER.info("Have fuel!");
                             this.furnacePos = this.getFurnaceWithoutFuel();
                             if (this.furnacePos != null) {
-                                LOGGER.info("Adding fuel!");
                                 return AIWorkerState.ADD_FUEL_TO_FURNACE;
                             }
                         }
                         this.furnacePos = this.getEmptyFurnaceWithFuel();
-                        LOGGER.info("Fill up furnaces!");
                         return this.furnacePos != null ? AIWorkerState.FILL_UP_FURNACES : AIWorkerState.START_WORKING;
                     }
                 }
