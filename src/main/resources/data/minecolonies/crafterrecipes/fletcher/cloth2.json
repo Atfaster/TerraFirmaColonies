@@ -1,0 +1,12 @@
+{
+  "type": "recipe",
+  "crafter": "fletcher_crafting",
+  "inputs": [
+    {
+      "item": "minecraft:string",
+      "count": 24
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "result": "tfc:silk_cloth"
+}

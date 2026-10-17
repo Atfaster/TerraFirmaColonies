@@ -1,0 +1,12 @@
+{
+  "type": "recipe",
+  "crafter": "fletcher_crafting",
+  "inputs": [
+    {
+      "item": "firmalife:pineapple_yarn",
+      "count": 16
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "result": "firmalife:pineapple_leather"
+}
