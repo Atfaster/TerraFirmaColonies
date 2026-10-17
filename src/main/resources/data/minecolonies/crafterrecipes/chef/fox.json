@@ -1,0 +1,12 @@
+{
+  "type": "recipe",
+  "crafter": "chef_smelting",
+  "inputs": [
+    {
+      "item": "tfc:food/fox"
+    }
+  ],
+  "intermediate": "minecraft:furnace",
+  "result": "tfc:food/cooked_fox",
+  "show-tooltip": true
+}

@@ -1,0 +1,12 @@
+{
+  "type": "recipe",
+  "crafter": "chef_smelting",
+  "inputs": [
+    {
+      "item": "tfc:food/camelidae"
+    }
+  ],
+  "intermediate": "minecraft:furnace",
+  "result": "tfc:food/cooked_camelidae",
+  "show-tooltip": true
+}

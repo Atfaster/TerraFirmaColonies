@@ -1,0 +1,12 @@
+{
+  "type": "recipe",
+  "crafter": "chef_smelting",
+  "inputs": [
+    {
+      "item": "tfc:food/wolf"
+    }
+  ],
+  "intermediate": "minecraft:furnace",
+  "result": "tfc:food/cooked_wolf",
+  "show-tooltip": true
+}

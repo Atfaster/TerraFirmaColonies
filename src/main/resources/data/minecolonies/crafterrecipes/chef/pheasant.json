@@ -1,0 +1,12 @@
+{
+  "type": "recipe",
+  "crafter": "chef_smelting",
+  "inputs": [
+    {
+      "item": "tfc:food/pheasant"
+    }
+  ],
+  "intermediate": "minecraft:furnace",
+  "result": "tfc:food/cooked_pheasant",
+  "show-tooltip": true
+}

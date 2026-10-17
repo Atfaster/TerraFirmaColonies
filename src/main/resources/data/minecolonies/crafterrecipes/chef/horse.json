@@ -1,0 +1,12 @@
+{
+  "type": "recipe",
+  "crafter": "chef_smelting",
+  "inputs": [
+    {
+      "item": "tfc:food/horse_meat"
+    }
+  ],
+  "intermediate": "minecraft:furnace",
+  "result": "tfc:food/cooked_horse_meat",
+  "show-tooltip": true
+}

@@ -1,0 +1,12 @@
+{
+  "type": "recipe",
+  "crafter": "chef_smelting",
+  "inputs": [
+    {
+      "item": "tfc:plant/giant_kelp_flower"
+    }
+  ],
+  "intermediate": "minecraft:furnace",
+  "result": "tfc:food/dried_kelp",
+  "show-tooltip": true
+}

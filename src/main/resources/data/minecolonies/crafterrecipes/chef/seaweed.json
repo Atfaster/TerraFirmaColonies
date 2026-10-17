@@ -1,0 +1,12 @@
+{
+  "type": "recipe",
+  "crafter": "chef_smelting",
+  "inputs": [
+    {
+      "item": "tfc:food/fresh_seaweed"
+    }
+  ],
+  "intermediate": "minecraft:furnace",
+  "result": "tfc:food/dried_seaweed",
+  "show-tooltip": true
+}

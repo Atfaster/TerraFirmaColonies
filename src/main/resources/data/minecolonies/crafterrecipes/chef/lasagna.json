@@ -1,0 +1,12 @@
+{
+  "type": "recipe",
+  "crafter": "chef_smelting",
+  "inputs": [
+    {
+      "item": "firmalife:food/raw_lasagna"
+    }
+  ],
+  "intermediate": "minecraft:furnace",
+  "result": "firmalife:food/cooked_lasagna",
+  "show-tooltip": true
+}

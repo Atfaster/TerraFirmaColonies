@@ -161,7 +161,7 @@ public abstract class AbstractEntityAIRequestSmelterMixin<J extends AbstractJobC
                         });
                     }
                 }
-                //Checking for charcoal forge (Stonesmelter, glassblower)
+                //Checking for charcoal forge (StoneSmelter, glassblower)
                 if (entity instanceof CharcoalForgeBlockEntity cforge) {
                     if (InventoryUtils.hasItemInItemHandler(this.worker.getInventoryCitizen(), isCorrectFuel(possibleFuels))) {
                         LazyOptional<IItemHandler> capabilityOpt = cforge.getCapability(Capabilities.ITEM, null);
@@ -695,7 +695,7 @@ public abstract class AbstractEntityAIRequestSmelterMixin<J extends AbstractJobC
         }
         if (this.building instanceof BuildingKitchen b) {
             if (!((ChefNewVaraibles) b).getOvenList().isEmpty() && ((ChefNewVaraibles) b).getPotPos() != null) {
-                for (BlockPos ovenPos : ((BakerNewVariables) b).getOvenList()) {
+                for (BlockPos ovenPos : ((ChefNewVaraibles) b).getOvenList()) {
                     if (!(world.getBlockEntity(ovenPos) instanceof OvenTopBlockEntity)) {
                         return false;
                     }
