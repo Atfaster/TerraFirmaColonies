@@ -112,14 +112,17 @@ public abstract class EntityAIWorkShepherdMixin extends AbstractEntityAIHerder<J
     //Unique methods
     @Unique
     private @Nullable WoolyAnimal terrafirmacolonies$findShearableAnimal() {
-        assert current_module != null;
-        List<? extends TFCAnimal> animals = this.searchForAnimals(current_module::isCompatible);
-        for (TFCAnimal animal : animals) {
-            if (animal instanceof WoolyAnimal sheep
-                    && animal.hasProduct()
-                    && animal.getFamiliarity() > 0.3F
-                    && !animal.getAgeType().equals(TFCAnimalProperties.Age.OLD)) {
-                return sheep;
+        if (current_module != null) {
+            List<? extends TFCAnimal> animals = this.searchForAnimals(current_module::isCompatible);
+            if (animals != null) {
+                for (TFCAnimal animal : animals) {
+                    if (animal instanceof WoolyAnimal sheep
+                            && animal.hasProduct()
+                            && animal.getFamiliarity() > 0.3F
+                            && !animal.getAgeType().equals(TFCAnimalProperties.Age.OLD)) {
+                        return sheep;
+                    }
+                }
             }
         }
         return null;
