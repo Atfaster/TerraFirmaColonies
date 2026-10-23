@@ -6,11 +6,12 @@ here=Path(__file__).resolve().parent
 parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--expected',choices=['broken','fixed'],default='broken')
 parser.add_argument('--lab-root',type=Path)
-parser.add_argument('--baseline-server',type=Path)
+parser.add_argument('--baseline-server',type=Path,required=True,help='Prepared Forge 1.20.1 server to copy read-only')
+parser.add_argument('--forge-version',help='Installed Forge version to select when the baseline has multiple versions')
 parser.add_argument('--mod-jar',type=Path)
 args=parser.parse_args()
 common=['--expected',args.expected]
-for key in ['lab_root','baseline_server','mod_jar']:
+for key in ['lab_root','baseline_server','mod_jar','forge_version']:
     value=getattr(args,key)
     if value is not None: common+=['--'+key.replace('_','-'),str(value)]
 steps=([('seed','fixed-seed',False),('mutate','fixed-mutate',False),('inspect','fixed-graceful-restart',False),

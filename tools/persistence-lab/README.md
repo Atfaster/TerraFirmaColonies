@@ -7,18 +7,26 @@ is copied. Keep baseline and fixed runs in separate lab directories.
 ## Prerequisites
 
 - Java 17 (`JAVA_HOME` or `PATH`), Python 3.10+, and this repository.
-- A started Forge 1.20.1-47.4.18 dedicated server with `libraries`, `mods`,
+- A prepared Forge Minecraft 1.20.1 dedicated server with `libraries`, `mods`,
   `config`, `defaultconfigs`, `server.properties`, and an accepted `eula.txt`.
-  The scripts copy runtime files and create a fresh world in the lab.
+  Start that server once to generate its runtime files, then stop it before
+  using it as the baseline. The scripts copy runtime files and create a fresh
+  world in the lab. The recorded automated runs used Forge 47.4.18.
 - Tested mods: MineColonies 1.1.1237-snapshot, TFC 3.2.27, Firmalife 2.1.28,
   Structurize 1.0.806, BlockUI 1.0.190, Domum Ornamentum 1.0.288, Patchouli 85,
   FirmalifeEnhance 1.0.0. Hashes are recorded in the evidence.
 
-The local default baseline is `run/greenhouse-lab/server`. Supply
-`--baseline-server` to use another installed server. The baseline is read-only.
-If its parent has `mods-manifest.json`, those file hashes are enforced;
-otherwise hashes are computed from the baseline. Only the supplied replacement
-TerraFirmaColonies JAR is exempt from the original-mod hash check.
+`--baseline-server` is required for every build or launch command: supply your
+own prepared server directory. It must be separate from, and not nested inside,
+the lab directory (or vice versa). The baseline is read-only; no world is copied.
+Copied mod hashes are checked against the supplied baseline JARs. An optional
+replacement TerraFirmaColonies JAR is checked against the replacement file.
+
+The launcher discovers the installed Forge 1.20.1 argument file for the current
+OS (`win_args.txt` or `unix_args.txt`). If the baseline contains multiple Forge
+versions, pass `--forge-version`, for example `--forge-version 47.4.18`, to every
+suite or individual launch command. Detection does not imply compatibility with
+arbitrary mod or Forge versions; use the tested versions above for reproduction.
 
 The lab binds to `127.0.0.1:25576` and creates `persistence-world`. Do not run
 suites concurrently. Existing result labels are refused; use a fresh
@@ -29,14 +37,16 @@ suites concurrently. Existing result labels are refused; use a fresh
 Build the normal distributable JAR first; `reobfJar` is part of this build:
 
 ```powershell
+$baseline = 'C:\path\to\prepared-forge-server'
 .\gradlew.bat build
-python tools/persistence-lab/build_probe.py --lab-root run/persistence-fixed-lab
-python tools/persistence-lab/run_suite.py --expected fixed --lab-root run/persistence-fixed-lab --mod-jar build/libs/terrafirmacolonies-0.1.3.4.jar
+python tools/persistence-lab/build_probe.py --baseline-server "$baseline" --lab-root run/persistence-fixed-lab
+python tools/persistence-lab/run_suite.py --baseline-server "$baseline" --expected fixed --lab-root run/persistence-fixed-lab --mod-jar build/libs/terrafirmacolonies-0.1.3.4.jar
 python tools/persistence-lab/summarize.py --lab-root run/persistence-fixed-lab
 ```
 
-Use a fresh lab root if the example directory already exists. Append the same
-`--baseline-server <path>` to build and suite commands for another baseline.
+Replace the example baseline path with your stopped, prepared server directory.
+Use the same baseline for probe compilation and suite launches. Use a fresh lab
+root if the example directory already exists.
 The probe compiles against the server's SRG runtime without changing Gradle
 dependencies or downloading anything.
 
@@ -60,10 +70,11 @@ Use unmodified TerraFirmaColonies 0.1.3.4 in the baseline and a fresh lab root.
 Do not supply `--mod-jar`:
 
 ```powershell
-python tools/persistence-lab/build_probe.py --lab-root run/persistence-original-lab
-python tools/persistence-lab/run_lab.py --mode seed --label seed --lab-root run/persistence-original-lab
-python tools/persistence-lab/run_lab.py --mode mutate --label graceful-mutate --lab-root run/persistence-original-lab
-python tools/persistence-lab/run_suite.py --lab-root run/persistence-original-lab
+$baseline = 'C:\path\to\prepared-forge-server-with-original-mod'
+python tools/persistence-lab/build_probe.py --baseline-server "$baseline" --lab-root run/persistence-original-lab
+python tools/persistence-lab/run_lab.py --baseline-server "$baseline" --mode seed --label seed --lab-root run/persistence-original-lab
+python tools/persistence-lab/run_lab.py --baseline-server "$baseline" --mode mutate --label graceful-mutate --lab-root run/persistence-original-lab
+python tools/persistence-lab/run_suite.py --baseline-server "$baseline" --lab-root run/persistence-original-lab
 python tools/persistence-lab/summarize.py --lab-root run/persistence-original-lab
 ```
 
@@ -95,13 +106,6 @@ university work cycles or citizen production/navigation. Follow the gameplay
 checklist in [the report](../../docs/colony-persistence-investigation.md) before
 claiming those behaviors are verified.
 
-To prepare the manual-test environment without installing the probe:
-
-```powershell
-python tools/persistence-lab/prepare_gameplay.py --mod-jar build/libs/terrafirmacolonies-0.1.3.4.jar
-```
-
-This creates a server on `127.0.0.1:25577` and a local-only CurseForge client
-import ZIP under `run/persistence-gameplay-lab`. Start the server using the
-generated PowerShell script with Java 17 on PATH. Import the ZIP as a new
-profile. The ZIP contains local copies of baseline mods; do not publish it.
+Manual gameplay checks use a separately prepared matching client/server profile
+without the probe. Client-profile packaging and local modpack distribution are
+outside this regression fixture.

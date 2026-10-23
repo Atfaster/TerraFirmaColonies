@@ -87,6 +87,12 @@ project has no JUnit sources, so Gradle's `test NO-SOURCE` is not a test pass.
 Instructions: [tools/persistence-lab](../tools/persistence-lab/README.md).
 Never install the test-only mod on a production server.
 
+The published fixture requires an explicitly supplied prepared server directory
+and discovers its installed Forge argument file. It does not require the original
+local lab or a client-profile generator. After that tooling cleanup, a fresh
+fixed-JAR run repeated all five JVM launches and 68 assertions successfully;
+the summarizer independently inspected saved NBT after both restart paths.
+
 ## Coverage limits and gameplay validation
 
 This change is limited to colony persistence. Independent glassblower AI cast

@@ -8,11 +8,22 @@ parser.add_argument('--mode', choices=['seed','mutate','inspect','control','insp
 parser.add_argument('--label', required=True)
 parser.add_argument('--crash', action='store_true')
 parser.add_argument('--expected', choices=['broken','fixed'], default='broken')
-parser.add_argument('--baseline-server', type=Path, default=repo/'run/greenhouse-lab/server')
+parser.add_argument('--baseline-server', type=Path, required=True, help='Prepared Forge 1.20.1 server to copy read-only')
+parser.add_argument('--forge-version', help='Installed Forge version to select when the baseline has multiple versions')
 parser.add_argument('--lab-root', type=Path, default=repo/'run/persistence-lab')
 parser.add_argument('--mod-jar', type=Path, help='Replacement TerraFirmaColonies JAR, only inside this lab')
 args = parser.parse_args()
 root=args.lab_root.resolve(); base=args.baseline_server.resolve(); server=root/'server'
+if base == root or base in root.parents or root in base.parents:
+    parser.error('--baseline-server and --lab-root must be separate, non-nested directories')
+forge_args_name = 'win_args.txt' if os.name == 'nt' else 'unix_args.txt'
+forge_libraries = base/'libraries/net/minecraftforge/forge'
+forge_candidates = list(forge_libraries.glob('1.20.1-*/'+forge_args_name))
+if args.forge_version:
+    forge_candidates = [p for p in forge_candidates if p.parent.name == '1.20.1-'+args.forge_version]
+if len(forge_candidates) != 1:
+    parser.error('Expected one installed Forge 1.20.1 argument file; use --forge-version to select among multiple versions')
+forge_args = forge_candidates[0].relative_to(base)
 java = str(Path(os.environ['JAVA_HOME'])/'bin/java') if os.environ.get('JAVA_HOME') else shutil.which('java')
 if not java: raise SystemExit('Java 17 is required (JAVA_HOME or PATH)')
 assert args.label.replace('-','').replace('_','').isalnum(), 'Use an alphanumeric label'
@@ -23,7 +34,7 @@ if not server.exists():
     server.mkdir(parents=True)
     for d in ['libraries','mods','config','defaultconfigs']:
         shutil.copytree(base/d, server/d)
-    # Fresh world, own port and configuration. Do not touch previous farmer lab.
+    # Fresh world, own port and configuration; the supplied baseline stays read-only.
     for f in ['eula.txt','server.properties']:
         shutil.copy2(base/f, server/f)
     props = (server/'server.properties').read_text()
@@ -32,9 +43,8 @@ if not server.exists():
     props+='\n'+'\n'.join(k+'='+v for k,v in overrides.items())+'\n'
     (server/'server.properties').write_text(props)
 shutil.copy2(root/'persistence-probe.jar', server/'mods/persistence-probe.jar')
-manifest_path=base.parent/'mods-manifest.json'
-manifest=json.loads(manifest_path.read_text(encoding='utf-8-sig')) if manifest_path.exists() else [
-    {'file':p.name,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in (base/'mods').glob('*.jar')]
+manifest=[{'file':p.name,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()}
+          for p in (base/'mods').glob('*.jar')]
 target_mods=list((server/'mods').glob('terrafirmacolonies-*.jar'))
 assert len(target_mods)==1, 'Expected exactly one TerraFirmaColonies JAR'
 if args.mod_jar:
@@ -51,9 +61,8 @@ def hashes():
     files = list((world/'data').glob('*')) + list((world/'minecolonies').rglob('*.dat')) + list(world.glob('level.dat*'))
     return {str(p.relative_to(server)):dict(size=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in files if p.is_file()}
 
-forge_args='win_args.txt' if os.name=='nt' else 'unix_args.txt'
 proc = subprocess.Popen([java,'-Xms512M','-Xmx3G','-Dpersistence.lab=true',f'-Dpersistence.mode={args.mode}',f'-Dpersistence.label={args.label}',f'-Dpersistence.expected={args.expected}',
-    '@libraries/net/minecraftforge/forge/1.20.1-47.4.18/'+forge_args,'nogui'], cwd=server,
+    '@'+forge_args.as_posix(),'nogui'], cwd=server,
     stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,encoding='utf-8',errors='replace')
 q=queue.Queue()
 def reader():
@@ -102,6 +111,7 @@ finally:
     if proc.poll() is None: proc.kill(); proc.wait(timeout=20)
     worker.join(timeout=5)
 result=dict(mode=args.mode,label=args.label,expected=args.expected,probe_ready=ready,save_command_completed=saved,fatal=fatal,shutdown_error=shutdown_error,cleanup_kill=cleanup_kill,forced_kill=args.crash,exit_code=proc.returncode,
+    forge_arguments_file=forge_args.as_posix(),
     mod_sha256=hashlib.sha256(target_mods[0].read_bytes()).hexdigest(),
     probe_sha256=hashlib.sha256((server/'mods/persistence-probe.jar').read_bytes()).hexdigest())
 (evidence/(args.label+'-result.json')).write_text(json.dumps(result,indent=2))
