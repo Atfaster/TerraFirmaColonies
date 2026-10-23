@@ -180,4 +180,9 @@ independent NBT comparison retained colony identity, all five building records
 and levels, registered equipment, four citizen job assignments and completed
 First Aid. No target persistence error appeared. The preceding session used
 the separate AI artifact, so its worker observations are not evidence for this
-PR's AI behavior. Final player GUI confirmation is tracked in the manual results.
+PR's AI behavior. The player then confirmed kitchen level 1 with chef Dylan Z. Miller and the
+completed First Aid checkmark in the university GUI. A subsequent flush and
+independent NBT inspection retained all five buildings, four citizens, kitchen
+equipment and finished research. The separate glassblower AI cast exception
+reappeared as expected after its fix was removed; it did not prevent this
+snapshot. Screenshots and log hashes are recorded in the manual results.

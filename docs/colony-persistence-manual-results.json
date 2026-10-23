@@ -357,7 +357,7 @@
     },
     {
       "phase": "full-pack-persistence-only-final-reload",
-      "result": "NBT comparison passed; post-restart player GUI pending",
+      "result": "NBT comparison and post-restart player GUI checks passed",
       "jar_sha256": "a110ae8b5d717bf7382f9dc7632007e30b28a6926187119fe3591406f883ad68",
       "runtime": "Minecraft 1.20.1 / Forge 47.4.20 / MineColonies 1.1.1237 / WarNTaxes 5.0.9",
       "saved_state": {
@@ -498,12 +498,57 @@
       "file_sha256": {
         "capabilities.dat": "dba7f4b2e6633c48d78635b818e51c01c1c65572d45754312cc88a75667d37b0",
         "server-observation.log": "c6fcf1460cffe4dfbc19dbca2a5ee0fcd8c2a5a564b7e8e9323338a1f5e64e8e"
+      },
+      "post_restart_player_gui": "See full-pack-persistence-only-final-player-gui"
+    },
+    {
+      "phase": "full-pack-persistence-only-final-player-gui",
+      "result": "passed",
+      "jar_sha256": "a110ae8b5d717bf7382f9dc7632007e30b28a6926187119fe3591406f883ad68",
+      "kitchen_gui": {
+        "level": 1,
+        "assigned_worker": "Dylan Z. Miller"
+      },
+      "research_gui": {
+        "id": "minecolonies:civilian/firstaid",
+        "completed_checkmark": true
+      },
+      "post_observation_flush": "02:32:31",
+      "post_flush_nbt": {
+        "building_count": 5,
+        "citizen_count": 4,
+        "research": {
+          "state": 2,
+          "branch": "minecolonies:civilian",
+          "progress": 7,
+          "depth": 1,
+          "id": "minecolonies:civilian/firstaid"
+        },
+        "kitchen_pot": {
+          "Y": 70,
+          "Z": 2863,
+          "X": 611
+        },
+        "kitchen_ovens": [
+          {
+            "Y": 71,
+            "Z": 2856,
+            "X": 607
+          }
+        ],
+        "VAT_tag_present": false
+      },
+      "persistence_error_found": false,
+      "separate_ai_error": "Existing glassblower ClassCastException and worker pauses reappeared after removing the independent AI fix; not addressed by this persistence PR",
+      "file_sha256": {
+        "2026-10-24_02.31.38.png": "ca606425017ad1ab50b2197591ecd52f2754b29507bb0160e2539e7f646aaaff",
+        "2026-10-24_02.31.55.png": "107a4802ff0e8e959bfa797567e9db8b3e59bd5de053a4c6c230538049e30019",
+        "capabilities.dat": "bd70d8277ab889ef8c0ad8e27ffe70762c67cbc3133cf4c4840aaacae60d0068",
+        "server-observation.log": "e7a9227fbdfe0b62e61f1b9ff39727117e456a002ddf8596936ee5b9ca0196b7"
       }
     }
   ],
-  "pending": [
-    "Final persistence-only artifact post-restart player GUI confirmation"
-  ],
+  "pending": [],
   "scope": "Colony persistence only; independent glassblower AI fixes and TFC glassworking production are excluded",
   "limitations": [
     "No production AI or navigation acceptance claim",
