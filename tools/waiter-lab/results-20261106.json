@@ -1,0 +1,43 @@
+{
+  "date": "2026-11-06",
+  "scope": "Direct transformed-method integration tests in Forge 47.4.20; not natural AI navigation",
+  "versions": {
+    "minecraft": "1.20.1",
+    "minecolonies": "1.1.1237-snapshot",
+    "tfc": "3.2.27",
+    "firmalife": "2.1.28",
+    "terrafirmacolonies": "0.1.3.4"
+  },
+  "runs": {
+    "baseline": {
+      "passed": true,
+      "cases": 40,
+      "food_transfers": 0,
+      "states": {
+        "INIT": 40
+      },
+      "cases_sha256": "d0ca4b0e3543a0d1fe0781e20bebb1389b9f4108c39be7ffed1faba146584260"
+    },
+    "fixed": {
+      "passed": true,
+      "cases": 40,
+      "food_transfers": 10,
+      "states": {
+        "COOK_SERVE_FOOD_TO_CITIZEN": 10,
+        "GATHERING_REQUIRED_MATERIALS": 10,
+        "START_WORKING": 20
+      },
+      "cases_sha256": "0e5ccd2618d6ef7096a67904c4ee138fcbc664c471a93677b0cdb7b9c543f985"
+    }
+  },
+  "controlled_comparison": {
+    "changed_mods": [
+      "terrafirmacolonies-0.1.3.4.jar"
+    ],
+    "changed_jar_entries": [
+      "net/ckeeze/terrafirmacolonies/mixin/EntityAIWorkCookMixin.class",
+      "terrafirmacolonies.mixins.json"
+    ],
+    "probe_entries_identical": true
+  }
+}
